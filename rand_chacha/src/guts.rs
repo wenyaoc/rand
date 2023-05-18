@@ -61,6 +61,10 @@ pub struct State<V> {
 // 	c += d,  b ^= c,  b = ROTL(b, 7))
 // #define ROUNDS 20
 
+// Inlining is an optimization where the function call is replaced with the actual body of the function, 
+// which can sometimes make the program faster by eliminating the overhead of the function call 
+// (e.g., passing parameters, jumping to the function code, then jumping back). 
+// It can be particularly beneficial for small, frequently called functions.
 #[inline(always)]
 pub(crate) fn round<V: ArithOps + BitOps32>(mut x: State<V>) -> State<V> {
     x.a += x.b;

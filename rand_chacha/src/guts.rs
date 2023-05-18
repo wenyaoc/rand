@@ -26,10 +26,15 @@ const STREAM_PARAM_BLOCK: u32 = 0;
 
 #[derive(Clone, PartialEq, Eq)]
 pub struct ChaCha {
-    pub(crate) b: vec128_storage,
+    pub(crate) b: vec128_storage, 
     pub(crate) c: vec128_storage,
     pub(crate) d: vec128_storage,
 }
+
+// pub(crate): b, c, and d are only visible within the crate 
+// vec128_storage: Generic wrapper for unparameterized storage of any of the possible impls. 
+//                 Converting into and out of this type should be essentially free, 
+//                 although it may be more aligned than a particular impl requires.
 
 #[derive(Clone)]
 pub struct State<V> {
@@ -38,6 +43,16 @@ pub struct State<V> {
     pub(crate) c: V,
     pub(crate) d: V,
 }
+
+// This struct is generic over V, meaning that the type of a, b, c, and d (4x32-bit (128-bit) vectors)
+// can be any type specified when the struct is used.
+
+
+// The ChaCha quarter-round
+// a += b; d ^= a; d <<<= 16;
+// c += d; b ^= c; b <<<= 12;
+// a += b; d ^= a; d <<<= 8;
+// c += d; b ^= c; b <<<= 7;
 
 #[inline(always)]
 pub(crate) fn round<V: ArithOps + BitOps32>(mut x: State<V>) -> State<V> {
@@ -51,6 +66,10 @@ pub(crate) fn round<V: ArithOps + BitOps32>(mut x: State<V>) -> State<V> {
     x.b = (x.b ^ x.c).rotate_each_word_right25();
     x
 }
+
+
+
+
 
 #[inline(always)]
 pub(crate) fn diagonalize<V: LaneWords4>(mut x: State<V>) -> State<V> {

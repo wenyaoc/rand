@@ -67,6 +67,8 @@ impl<T> fmt::Debug for Array64<T> {
     }
 }
 
+
+
 macro_rules! chacha_impl {
     ($ChaChaXCore:ident, $ChaChaXRng:ident, $rounds:expr, $doc:expr, $abst:ident) => {
         #[doc=$doc]
@@ -74,6 +76,17 @@ macro_rules! chacha_impl {
         pub struct $ChaChaXCore {
             state: ChaCha,
         }
+        // $ChaChaXCore: the name of the new struct.
+        // $rounds: represents the number of rounds in the ChaCha algorithm
+        // $doc: a string that serves as the documentation for the new struct.
+        // $abst isn't used in the provided snippet
+
+        // #[doc=$doc]: programmatically attaching a documentation comment to the struct
+        // #[derive(Clone, PartialEq, Eq)]: automatically implements the Clone, PartialEq, and Eq traits for the struct. 
+        //                                  Clone allows the struct to be duplicated, 
+        //                                  PartialEq allows comparisons for equality
+        //                                  Eq indicates that all values of this struct are reflexive, symmetric, and transitive.
+
 
         // Custom Debug implementation that does not expose the internal state
         impl fmt::Debug for $ChaChaXCore {
@@ -143,7 +156,17 @@ macro_rules! chacha_impl {
         pub struct $ChaChaXRng {
             rng: BlockRng<$ChaChaXCore>,
         }
+        // #[derive(Clone, Debug)]: Tells Rust to automatically generate Clone and Debug trait implementations for this struct. 
+        //                          The Clone trait allows instances of the struct to be duplicated, 
+        //                          and the Debug trait allows instances of the struct to be formatted as strings for debugging output.
+        // pub struct $ChaChaXRng: This line defines a new public struct with the name given by $ChaChaXRng.
+        // rng: BlockRng<$ChaChaXCore>: This line defines a single field for the struct named rng, 
+        //                              which is of type BlockRng<$ChaChaXCore>.
+        
 
+        //  The $ChaChaXRng struct is a "full" RNG in this design. 
+        // It wraps the $ChaChaXCore struct in a BlockRng, which is a type provided by the rand crate that 
+        // implements the RngCore trait for any type that implements BlockRngCore.
         impl SeedableRng for $ChaChaXRng {
             type Seed = [u8; 32];
             #[inline]

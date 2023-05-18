@@ -53,6 +53,13 @@ pub struct State<V> {
 // c += d; b ^= c; b <<<= 12;
 // a += b; d ^= a; d <<<= 8;
 // c += d; b ^= c; b <<<= 7;
+// #define ROTL(a,b) (((a) << (b)) | ((a) >> (32 - (b))))
+// #define QR(a, b, c, d) (			\
+// 	a += b,  d ^= a,  d = ROTL(d,16),	\
+// 	c += d,  b ^= c,  b = ROTL(b,12),	\
+// 	a += b,  d ^= a,  d = ROTL(d, 8),	\
+// 	c += d,  b ^= c,  b = ROTL(b, 7))
+// #define ROUNDS 20
 
 #[inline(always)]
 pub(crate) fn round<V: ArithOps + BitOps32>(mut x: State<V>) -> State<V> {
